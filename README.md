@@ -38,7 +38,7 @@ Basically, money. Internet people call money 'tendies' and it's a word play on '
 ## Run it locally (written for Windows and VSCode)
 1) Create a directory and clone the repo in it:
 ```
-git clone https://github.com/eddyharrington/Tendie-Tracker
+git clone https://github.com/MissHaRin19/Budget-Tracker/tree/main
 ```
 2) Create your virtual environment:
 ```
