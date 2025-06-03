@@ -20,7 +20,7 @@ Basically, money. Internet people call money 'tendies' and it's a word play on '
   * Front-end: [Bootstrap](https://getbootstrap.com/), [Chart.js](https://www.chartjs.org/), and [DataTables](https://datatables.net/)
     * [Tendietracker.com](https://www.tendietracker.com) uses [Webflow](https://www.webflow.com) and stills / mock ups from [Pixabay](https://pixabay.com) and [Burst](https://burst.shopify.com). Images are created with [Gimp](https://www.gimp.org/), [Figma](https://www.figma.com), and [ScreenToGif](https://www.screentogif.com/)
   * Back-end: [Flask](https://flask.palletsprojects.com)
-  * Hosting: [Heroku](https://www.heroku.com)
+  * Hosting: [Render](https://money-mantra.onrender.com)
 
 ## Demo
 ### Dashboard
