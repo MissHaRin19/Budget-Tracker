@@ -24,7 +24,7 @@ Update Budget
     <div class="form-group">
         <label for="amount" class="formLabels">Amount (Annual)</label>
         {% set remainingBudget = (income - (budgeted - budget["amount"])) %}
-        <input type="number" class="form-control" id="amount" form='updateBudgetForm' name="amount" placeholder="$"
+        <input type="number" class="form-control" id="amount" form='updateBudgetForm' name="amount" placeholder="₹"
             value="{{ budget['amount'] }}" required min="0.01" step="0.01" max="{{ remainingBudget }}"
             oninput="calculateEstimates()">
         <small class="form-text text-muted">Remaining income that is not yet budgeted: <a href=""
