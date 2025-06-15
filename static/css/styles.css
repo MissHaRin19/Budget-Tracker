@@ -76,3 +76,8 @@ main img
     padding-bottom: 0.5rem;
     padding-left: 0.2rem;
 }
+
+.logo-img {
+  height: 50px;
+  width: auto;
+}
