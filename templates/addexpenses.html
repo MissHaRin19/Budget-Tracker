@@ -55,7 +55,7 @@
               <td>
                   <!-- Modified RegEx from Gary @ StackOverflow: https://stackoverflow.com/a/16242575 -->
                   <!-- TODO: change input type from 'text' to 'number' to remove the need for regex? Look at my implementation on budgets.html and use the same thing here -->
-                  <input type="text" class="form-control-sm" name="amount.1" form='expenseForm' size="10" placeholder="$" required maxlength="10" pattern="(?=.*?\d)^(([1-9]\d{0,2}(\d{3})*)|\d+)?(\.\d{1,2})?$" title="Format must be currency value without dollar sign or commas e.g. 1, 2.50, 1500.75">
+                  <input type="text" class="form-control-sm" name="amount.1" form='expenseForm' size="10" placeholder="₹" required maxlength="10" pattern="(?=.*?\d)^(([1-9]\d{0,2}(\d{3})*)|\d+)?(\.\d{1,2})?$" title="Format must be currency value without dollar sign or commas e.g. 1, 2.50, 1500.75">
               </td>
             </tr>
           </tbody>
