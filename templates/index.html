@@ -13,7 +13,7 @@ Home
 
 <!-- Begin Quick Expense -->
 <button type="button" class="btn btn-outline-primary btn-block btn-lg" data-toggle="modal"
-    data-target="#quickExpenseModal">💰 Quick Expense 💰</button>
+    data-target="#quickExpenseModal"> Quick Expense </button>
 
 <div class="modal fade" id="quickExpenseModal" tabindex="-1" role="dialog" aria-labelledby="quickExpenseModalLabel"
     aria-hidden="true">
@@ -89,7 +89,7 @@ Home
                 <div class="card-header"><strong>Remaining Income</strong></div>
                 <div class="card-body">
                     {% set remainingIncome = (income - expenses_year) %}
-                    {% if remainingIncome < 0 %} <h4 class="card-title">$0</h4>
+                    {% if remainingIncome < 0 %} <h4 class="card-title">₹0</h4>
                         {% else %}
                         <h4 class="card-title">{{ remainingIncome | usd }}</h4>
                         {% endif %}
