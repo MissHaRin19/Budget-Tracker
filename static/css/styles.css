@@ -116,7 +116,7 @@ body.dark-mode {
 .dark-mode .container,
 .dark-mode main {
     background-color: #1e1e1e;
-    color: #ffffff;
+    color: #6c757d;
 }
 
 .dark-mode .form-control,
