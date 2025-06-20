@@ -1,51 +1,32 @@
-/*Layout styling*/
-nav .navbar-brand
-{
-    /* size for brand */
+/* Layout Styling */
+nav .navbar-brand {
     font-size: x-large;
 }
 
-/* colors for brand */
-nav .navbar-brand .orange
-{
-    color: #ff9331;;
-}
-
+/* Navbar Color */
 .navbar.bg-dark {
- background-color:#02B875 !important
+    background-color: #02B875 !important;
 }
 
-main .form-control
-{
-    /* center form controls */
+main .form-control {
     display: inline-block;
-
-    /* override Bootstrap's 100% width for form controls */
     width: auto;
 }
 
-main
-{
-    /* scroll horizontally as needed */
+main {
     overflow-x: auto;
-
-    /* center contents */
     text-align: center;
 }
 
-main img
-{
-    /* constrain images on small screens */
+main img {
     max-width: 100%;
 }
 
-/*Report styling*/
-
+/* Report Styling */
 #navReports ul {
     position: fixed;
     top: 10%;
     left: 0;
-
 }
 
 #navReports li {
@@ -59,25 +40,125 @@ main img
     color: white;
 }
 
-/* Budget styling*/
+/* Budget Form Labels */
 .formLabels {
     font-weight: bold;
 }
 
-.categoryPercent
-{
+.categoryPercent {
     width: 75px;
 }
 
-/*Dashboard*/
-.card-body-dash{
-    padding-top: 0.5rem;
-    padding-right: 0.2rem;
-    padding-bottom: 0.5rem;
-    padding-left: 0.2rem;
+/* Dashboard Card */
+.card-body-dash {
+    padding: 0.5rem 0.2rem;
 }
 
-.logo-img {
-  height: 50px;
-  width: auto;
+/* Dark Mode Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    margin-left: 10px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+/* Dark Mode Theme */
+body.dark-mode {
+    background-color: #121212;
+    color: #f1f1f1;
+}
+
+.dark-mode .navbar {
+    background-color: #1f1f1f !important;
+    border-bottom: 1px solid #333;
+}
+
+.dark-mode .card,
+.dark-mode .container,
+.dark-mode main {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark-mode .form-control,
+.dark-mode input,
+.dark-mode select,
+.dark-mode textarea {
+    background-color: #2c2c2c;
+    color: #fff;
+    border-color: #444;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #aaa;
+}
+
+.dark-mode .table {
+    background-color: #1e1e1e;
+    color: #fff;
+}
+
+.dark-mode .table th,
+.dark-mode .table td {
+    border-color: #444;
+}
+
+.dark-mode a {
+    color: #76c7ff;
+}
+
+.dark-mode .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.dark-mode footer {
+    background-color: #1a1a1a;
+    color: #999;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+    .switch {
+        margin-top: 10px;
+    }
 }
