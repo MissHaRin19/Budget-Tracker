@@ -162,3 +162,16 @@ body.dark-mode {
         margin-top: 10px;
     }
 }
+/* Logo toggle */
+.logo-dark {
+    display: none;
+}
+
+body.dark-mode .logo-light {
+    display: none;
+}
+
+body.dark-mode .logo-dark {
+    display: inline-block;
+}
+
