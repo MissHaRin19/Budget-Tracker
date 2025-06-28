@@ -24,10 +24,12 @@
 </head>
 
 <body>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/">Money Mantra</a>
+        <a class="navbar-brand" href="/">
+            <img id="logo" src="/static/logo.png" alt="Money Mantra Logo" style="height: 30px; vertical-align: middle;">
+            Money Mantra
+        </a>
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor02"
             aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -61,7 +63,6 @@
 
     <!-- Main -->
     <main class="container p-5 text-center">
-
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
@@ -81,40 +82,37 @@
 
     <!-- Footer -->
     <footer class="small text-center text-muted mt-5 mb-4">
-    Created by <span style="color: #007BFF; font-weight: bold;">T A T</span>. Money Mantra 
-    <a href="https://github.com/MissHaRin19/Budget-Tracker" target="_blank">source code</a>
-</footer>
-
+        Created by <span style="color: #007BFF; font-weight: bold;">T A T</span>. Money Mantra
+        <a href="https://github.com/MissHaRin19/Budget-Tracker" target="_blank">source code</a>
+    </footer>
 
     <!-- Dark Mode Script -->
     <script>
-    const toggle = document.getElementById('darkModeToggle');
-    const body = document.body;
-    const logo = document.getElementById('logo');
+        const toggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const logo = document.getElementById('logo');
 
-    function updateLogo() {
-        if (body.classList.contains('dark-mode')) {
-            logo.src = '/static/logo-dark.png';
-        } else {
-            logo.src = '/static/logo.png';
+        function updateLogo() {
+            if (body.classList.contains('dark-mode')) {
+                logo.src = '/static/logo-dark.png';
+            } else {
+                logo.src = '/static/logo.png';
+            }
         }
-    }
 
-    toggle.addEventListener('change', function () {
-        body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        updateLogo();
-    });
+        toggle.addEventListener('change', function () {
+            body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+            updateLogo();
+        });
 
-    window.addEventListener('DOMContentLoaded', () => {
-        if (localStorage.getItem('darkMode') === 'true') {
-            body.classList.add('dark-mode');
-            toggle.checked = true;
-        }
-        updateLogo();
-    });
-</script>
-
-
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('darkMode') === 'true') {
+                body.classList.add('dark-mode');
+                toggle.checked = true;
+            }
+            updateLogo();
+        });
+    </script>
 </body>
 </html>
