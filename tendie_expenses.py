@@ -1,150 +1,180 @@
 import os
 import calendar
-
-from flask import request, session
+from datetime import datetime
+from flask import request, session, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from datetime import datetime
 from helpers import convertSQLToDict
 
-# Create engine object to manage connections to DB, and scoped session to separate user interactions with DB
+# DB setup
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-# Add expense(s) to the users expense records
-# There are two entry points for this: 1) 'addexpenses' route and 2) 'index' route. #1 allows many expenses whereas #2 only allows 1 expense per POST.
 def addExpenses(formData, userID):
     expenses = []
-    expense = {"description": None, "category": None,
-               "date": None, "amount": None, "payer": None}
+    expense = {"description": None, "category": None, "date": None, "amount": None, "payer": None}
 
-    # Check if the user is submitting via 'addexpenses' or 'index' route - this determines if a user is adding 1 or potentially many expenses in a single POST
+    # One record (from index route)
     if "." not in formData[0][0]:
         for key, value in formData:
-            # Add to dictionary
             expense[key] = value.strip()
-
-        # Convert the amount from string to float for the DB
         expense["amount"] = float(expense["amount"])
-
-        # Add dictionary to list (to comply with design/standard of expensed.html)
         expenses.append(expense)
 
-    # User is submitting via 'addexpenses' route
+    # Multiple records (from addexpenses route)
     else:
         counter = 0
         for key, value in formData:
-            # Keys are numbered by default in HTML form. Remove those numbers so we can use the HTML element names as keys for the dictionary.
-            cleanKey = key.split(".")
-
-            # Add to dictionary
-            expense[cleanKey[0]] = value.strip()
-
-            # Every 5 loops add the expense to the list of expenses (because there are 5 fields for an expense record)
+            cleanKey = key.split(".")[0]
+            expense[cleanKey] = value.strip()
             counter += 1
             if counter % 5 == 0:
-                # Store the amount as a float
                 expense["amount"] = float(expense["amount"])
-
-                # Add dictionary to list
                 expenses.append(expense.copy())
 
-    # Insert expenses into DB
+    # Insert into DB
     for expense in expenses:
         now = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-        db.execute("INSERT INTO expenses (description, category, expenseDate, amount, payer, submitTime, user_id) VALUES (:description, :category, :expenseDate, :amount, :payer, :submitTime, :usersID)",
-                   {"description": expense["description"], "category": expense["category"], "expenseDate": expense["date"], "amount": expense["amount"], "payer": expense["payer"], "submitTime": now, "usersID": userID})
+        db.execute("""
+            INSERT INTO expenses (description, category, expenseDate, amount, payer, submitTime, user_id)
+            VALUES (:description, :category, :expenseDate, :amount, :payer, :submitTime, :usersID)
+        """, {
+            "description": expense["description"],
+            "category": expense["category"],
+            "expenseDate": expense["date"],
+            "amount": expense["amount"],
+            "payer": expense["payer"],
+            "submitTime": now,
+            "usersID": userID
+        })
     db.commit()
+
+    # ✅ Alert Logic: Budget usage warning
+    for expense in expenses:
+        category = expense["category"]
+        result = db.execute("""
+            SELECT SUM(amount) FROM expenses
+            WHERE user_id = :userID AND category = :category
+        """, {"userID": userID, "category": category}).fetchone()
+
+        current_spent = result[0] if result[0] else 0
+
+        result = db.execute("""
+            SELECT bc.amount FROM budgetCategories bc
+            JOIN budgets b ON bc.budgets_id = b.id
+            WHERE b.user_id = :userID AND bc.category_id = (
+                SELECT id FROM categories WHERE name = :category LIMIT 1
+            )
+        """, {"userID": userID, "category": category}).fetchone()
+
+        budget_limit = result[0] if result else None
+
+        if budget_limit:
+            usage_ratio = current_spent / budget_limit
+            if usage_ratio > 1:
+                flash(f"⚠️ You’ve exceeded your budget for '{category}'!", "danger")
+            elif usage_ratio >= 0.5:
+                flash(f"⚠️ You’ve used over 50% of your '{category}' budget.", "warning")
 
     return expenses
 
 
-# Get and return the users lifetime expense history
 def getHistory(userID):
-    results = db.execute("SELECT description, category, expenseDate AS date, payer, amount, submitTime FROM expenses WHERE user_id = :usersID ORDER BY id ASC",
-                         {"usersID": userID}).fetchall()
+    results = db.execute("""
+        SELECT description, category, expenseDate AS date, payer, amount, submitTime
+        FROM expenses
+        WHERE user_id = :usersID
+        ORDER BY id ASC
+    """, {"usersID": userID}).fetchall()
 
-    history = convertSQLToDict(results)
-
-    return history
+    return convertSQLToDict(results)
 
 
-# Get and return an existing expense record with ID from the DB
 def getExpense(formData, userID):
-    expense = {"description": None, "category": None,
-               "date": None, "amount": None, "payer": None, "submitTime": None, "id": None}
-    expense["description"] = formData.get("oldDescription").strip()
-    expense["category"] = formData.get("oldCategory").strip()
-    expense["date"] = formData.get("oldDate").strip()
-    expense["amount"] = formData.get("oldAmount").strip()
-    expense["payer"] = formData.get("oldPayer").strip()
-    expense["submitTime"] = formData.get("submitTime").strip()
+    expense = {
+        "description": formData.get("oldDescription").strip(),
+        "category": formData.get("oldCategory").strip(),
+        "date": formData.get("oldDate").strip(),
+        "amount": float(formData.get("oldAmount").replace("$", "").replace(",", "").strip()),
+        "payer": formData.get("oldPayer").strip(),
+        "submitTime": formData.get("submitTime").strip(),
+        "id": None
+    }
 
-    # Remove dollar sign and comma from the old expense so we can convert to float for the DB
-    expense["amount"] = float(
-        expense["amount"].replace("$", "").replace(",", ""))
+    expenseID = db.execute("""
+        SELECT id FROM expenses
+        WHERE user_id = :usersID
+        AND description = :oldDescription
+        AND category = :oldCategory
+        AND expenseDate = :oldDate
+        AND amount = :oldAmount
+        AND payer = :oldPayer
+        AND submitTime = :oldSubmitTime
+    """, {
+        "usersID": userID,
+        "oldDescription": expense["description"],
+        "oldCategory": expense["category"],
+        "oldDate": expense["date"],
+        "oldAmount": expense["amount"],
+        "oldPayer": expense["payer"],
+        "oldSubmitTime": expense["submitTime"]
+    }).fetchone()
 
-    # Query the DB for the expense unique identifier
-    expenseID = db.execute("SELECT id FROM expenses WHERE user_id = :usersID AND description = :oldDescription AND category = :oldCategory AND expenseDate = :oldDate AND amount = :oldAmount AND payer = :oldPayer AND submitTime = :oldSubmitTime",
-                           {"usersID": userID, "oldDescription": expense["description"], "oldCategory": expense["category"], "oldDate": expense["date"], "oldAmount": expense["amount"], "oldPayer": expense["payer"], "oldSubmitTime": expense["submitTime"]}).fetchone()
-
-    # Make sure a record was found for the expense otherwise set as None
-    if expenseID:
-        expense["id"] = expenseID[0]
-    else:
-        expense["id"] = None
-
+    expense["id"] = expenseID[0] if expenseID else None
     return expense
 
 
-# Delete an existing expense record for the user
 def deleteExpense(expense, userID):
-    result = db.execute("DELETE FROM expenses WHERE user_id = :usersID AND id = :oldExpenseID",
-                        {"usersID": userID, "oldExpenseID": expense["id"]})
+    result = db.execute("""
+        DELETE FROM expenses
+        WHERE user_id = :usersID AND id = :oldExpenseID
+    """, {"usersID": userID, "oldExpenseID": expense["id"]})
     db.commit()
-
     return result
 
 
-# Update an existing expense record for the user
 def updateExpense(oldExpense, formData, userID):
-    expense = {"description": None, "category": None,
-               "date": None, "amount": None, "payer": None}
-    expense["description"] = formData.get("description").strip()
-    expense["category"] = formData.get("category").strip()
-    expense["date"] = formData.get("date").strip()
-    expense["amount"] = formData.get("amount").strip()
-    expense["payer"] = formData.get("payer").strip()
+    expense = {
+        "description": formData.get("description").strip(),
+        "category": formData.get("category").strip(),
+        "date": formData.get("date").strip(),
+        "amount": float(formData.get("amount").strip()),
+        "payer": formData.get("payer").strip()
+    }
 
-    # Convert the amount from string to float for the DB
-    expense["amount"] = float(expense["amount"])
+    hasChanges = any(
+        oldExpense.get(key) != expense.get(key)
+        for key in ["description", "category", "date", "amount", "payer"]
+    )
 
-    # Make sure the user actually is submitting changes and not saving the existing expense again
-    hasChanges = False
-    for key, value in oldExpense.items():
-        # Exit the loop when reaching submitTime since that is not something the user provides in the form for a new expense
-        if key == "submitTime":
-            break
-        else:
-            if oldExpense[key] != expense[key]:
-                hasChanges = True
-                break
-    if hasChanges is False:
+    if not hasChanges:
         return None
 
-    # Update the existing record
     now = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-    result = db.execute("UPDATE expenses SET description = :newDescription, category = :newCategory, expenseDate = :newDate, amount = :newAmount, payer = :newPayer, submitTime = :newSubmitTime WHERE id = :existingExpenseID AND user_id = :usersID",
-                        {"newDescription": expense["description"], "newCategory": expense["category"], "newDate": expense["date"], "newAmount": expense["amount"], "newPayer": expense["payer"], "newSubmitTime": now, "existingExpenseID": oldExpense["id"], "usersID": userID}).rowcount
+    result = db.execute("""
+        UPDATE expenses SET
+        description = :newDescription,
+        category = :newCategory,
+        expenseDate = :newDate,
+        amount = :newAmount,
+        payer = :newPayer,
+        submitTime = :newSubmitTime
+        WHERE id = :existingExpenseID AND user_id = :usersID
+    """, {
+        "newDescription": expense["description"],
+        "newCategory": expense["category"],
+        "newDate": expense["date"],
+        "newAmount": expense["amount"],
+        "newPayer": expense["payer"],
+        "newSubmitTime": now,
+        "existingExpenseID": oldExpense["id"],
+        "usersID": userID
+    }).rowcount
     db.commit()
 
-    # Make sure result is not empty (indicating it could not update the expense)
     if result:
-        # Add dictionary to list (to comply with design/standard of expensed.html)
-        expenses = []
-        expenses.append(expense)
-        return expenses
+        return [expense]
     else:
         return None
