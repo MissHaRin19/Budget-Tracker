@@ -81,27 +81,40 @@
 
     <!-- Footer -->
     <footer class="small text-center text-muted mt-5 mb-4">
-        Created by <a href="https://twitter.com/eddy_harrington" target="_blank">Eddy Harrington</a> |
-        <a href="https://github.com/eddyharrington/Tendie-Tracker" target="_blank">Source Code</a>
-    </footer>
+    Created by <span style="color: #007BFF; font-weight: bold;">T A T</span>. Money Mantra 
+    <a href="https://github.com/MissHaRin19/Budget-Tracker" target="_blank">source code</a>
+</footer>
+
 
     <!-- Dark Mode Script -->
     <script>
-        const toggle = document.getElementById('darkModeToggle');
-        const body = document.body;
+    const toggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    const logo = document.getElementById('logo');
 
-        toggle.addEventListener('change', function () {
-            body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
-        });
+    function updateLogo() {
+        if (body.classList.contains('dark-mode')) {
+            logo.src = '/static/logo-dark.png';
+        } else {
+            logo.src = '/static/logo.png';
+        }
+    }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('darkMode') === 'true') {
-                body.classList.add('dark-mode');
-                toggle.checked = true;
-            }
-        });
-    </script>
+    toggle.addEventListener('change', function () {
+        body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        updateLogo();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        if (localStorage.getItem('darkMode') === 'true') {
+            body.classList.add('dark-mode');
+            toggle.checked = true;
+        }
+        updateLogo();
+    });
+</script>
+
 
 </body>
 </html>
