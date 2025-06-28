@@ -174,4 +174,18 @@ body.dark-mode .logo-light {
 body.dark-mode .logo-dark {
     display: inline-block;
 }
+/* Show only one logo based on mode */
+.logo.light-mode {
+    display: inline;
+}
+.logo.dark-mode {
+    display: none;
+}
+
+body.dark-mode .logo.light-mode {
+    display: none;
+}
+body.dark-mode .logo.dark-mode {
+    display: inline;
+}
 
