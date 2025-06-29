@@ -163,20 +163,15 @@ body.dark-mode {
     }
 }
 
-/* Logo Toggle Logic */
+/* Logo Visibility Fix */
 .logo {
-    height: 80px;
-    width: auto;
-    max-width: 100%;
+    display: none;
 }
 
-/* Hide dark logo by default */
-.logo-dark {
-    display: none;
+body:not(.dark-mode) .logo.light-mode {
+    display: inline;
 }
-body.dark-mode .logo-light {
-    display: none;
-}
-body.dark-mode .logo-dark {
-    display: inline-block;
+
+body.dark-mode .logo.dark-mode {
+    display: inline;
 }
