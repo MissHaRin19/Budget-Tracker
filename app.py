@@ -907,3 +907,11 @@ def errorhandler(e):
 # Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
+
+@app.route("/addexpenses", methods=["GET", "POST"])
+def add_expenses():
+    if request.method == "POST":
+        addExpenses(request.form.items(), session["user_id"])
+        return redirect("/")  # Flash shows here!
+    return render_template("addexpenses.html")
+
