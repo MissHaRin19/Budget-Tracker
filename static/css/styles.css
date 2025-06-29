@@ -162,30 +162,21 @@ body.dark-mode {
         margin-top: 10px;
     }
 }
-/* Logo toggle */
+
+/* Logo Toggle Logic */
+.logo {
+    height: 80px;
+    width: auto;
+    max-width: 100%;
+}
+
+/* Hide dark logo by default */
 .logo-dark {
     display: none;
 }
-
 body.dark-mode .logo-light {
     display: none;
 }
-
 body.dark-mode .logo-dark {
     display: inline-block;
 }
-/* Show only one logo based on mode */
-.logo.light-mode {
-    display: inline;
-}
-.logo.dark-mode {
-    display: none;
-}
-
-body.dark-mode .logo.light-mode {
-    display: none;
-}
-body.dark-mode .logo.dark-mode {
-    display: inline;
-}
-
