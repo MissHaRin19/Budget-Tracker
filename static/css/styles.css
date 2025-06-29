@@ -177,7 +177,7 @@ body.dark-mode .logo.dark-mode {
 }
 /* Logo Size Consistency */
 .logo {
-    height: 80px;
+    height: 100px;
     width: auto;
     max-width: 100%;
     margin-bottom: 1rem;
