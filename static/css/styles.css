@@ -175,3 +175,10 @@ body:not(.dark-mode) .logo.light-mode {
 body.dark-mode .logo.dark-mode {
     display: inline;
 }
+/* Logo Size Consistency */
+.logo {
+    height: 80px;
+    width: auto;
+    max-width: 100%;
+    margin-bottom: 1rem;
+}
