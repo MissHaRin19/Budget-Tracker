@@ -2,14 +2,14 @@ from dotenv import load_dotenv
 import os
 
 # Load environment variables from .env file
-#load_dotenv()
+load_dotenv()
 
 # Access variables using os.getenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 # Now use them in your app configuration (for example, to connect to the database)
-#print(f"Secret Key: {SECRET_KEY}")  # Only for testing purpose, don't print sensitive info in production
+print(f"Secret Key: {SECRET_KEY}")  # Only for testing purpose, don't print sensitive info in production
 
 import os
 import json
@@ -907,11 +907,3 @@ def errorhandler(e):
 # Listen for errors
 for code in default_exceptions:
     app.errorhandler(code)(errorhandler)
-
-@app.route("/addexpenses", methods=["GET", "POST"])
-def add_expenses():
-    if request.method == "POST":
-        addExpenses(request.form.items(), session["user_id"])
-        return redirect("/")  # Flash shows here!
-    return render_template("addexpenses.html")
-
